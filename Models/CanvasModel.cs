@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace YourProjectName.Models
+namespace graphic_editor.Models
 {
     public class CanvasModel
     {

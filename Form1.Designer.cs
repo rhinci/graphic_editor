@@ -33,6 +33,7 @@
             новыйToolStripMenuItem = new ToolStripMenuItem();
             открытьToolStripMenuItem = new ToolStripMenuItem();
             сохранитьToolStripMenuItem = new ToolStripMenuItem();
+            canvasControl1 = new graphic_editor.Views.CanvasControl();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -56,26 +57,36 @@
             // новыйToolStripMenuItem
             // 
             новыйToolStripMenuItem.Name = "новыйToolStripMenuItem";
-            новыйToolStripMenuItem.Size = new Size(224, 26);
+            новыйToolStripMenuItem.Size = new Size(166, 26);
             новыйToolStripMenuItem.Text = "Новый";
             // 
             // открытьToolStripMenuItem
             // 
             открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            открытьToolStripMenuItem.Size = new Size(224, 26);
+            открытьToolStripMenuItem.Size = new Size(166, 26);
             открытьToolStripMenuItem.Text = "Открыть";
             // 
             // сохранитьToolStripMenuItem
             // 
             сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            сохранитьToolStripMenuItem.Size = new Size(224, 26);
+            сохранитьToolStripMenuItem.Size = new Size(166, 26);
             сохранитьToolStripMenuItem.Text = "Сохранить";
+            // 
+            // canvasControl1
+            // 
+            canvasControl1.BackColor = Color.White;
+            canvasControl1.Location = new Point(12, 31);
+            canvasControl1.Model = null;
+            canvasControl1.Name = "canvasControl1";
+            canvasControl1.Size = new Size(1189, 587);
+            canvasControl1.TabIndex = 1;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1213, 715);
+            Controls.Add(canvasControl1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
@@ -93,5 +104,6 @@
         private ToolStripMenuItem новыйToolStripMenuItem;
         private ToolStripMenuItem открытьToolStripMenuItem;
         private ToolStripMenuItem сохранитьToolStripMenuItem;
+        private Views.CanvasControl canvasControl1;
     }
 }
