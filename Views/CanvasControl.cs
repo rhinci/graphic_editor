@@ -20,6 +20,7 @@ namespace graphic_editor.Views
         private PointF _lastMousePosition;
         private Shape? _draggedShape;
         public Shape? CurrentDrawingShape { get; set; }
+        public bool IsCreatingShape { get; set; } = false;
 
 
         public CanvasModel? Model
@@ -49,13 +50,11 @@ namespace graphic_editor.Views
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            // Рисуем все фигуры из модели
             foreach (var shape in _model.Shapes)
             {
                 shape.Draw(g);
             }
 
-            // --- НОВОЕ: Рисуем фигуру, которую сейчас создаём ---
             if (CurrentDrawingShape != null)
             {
                 CurrentDrawingShape.Draw(g);
@@ -67,7 +66,7 @@ namespace graphic_editor.Views
         {
             base.OnMouseDown(e);
 
-            if (_model == null) return;
+            if (_model == null || IsCreatingShape) return;
 
             PointF clickPoint = new PointF(e.X, e.Y);
             _model.SelectShapeAtPoint(clickPoint);

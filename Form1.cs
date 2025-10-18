@@ -50,6 +50,8 @@ namespace graphic_editor
         {
             if (_currentTool == "select") return;
 
+            canvasControl1.IsCreatingShape = true;
+
             _isDrawing = true;
             _drawStartPoint = new PointF(e.X, e.Y);
 
@@ -80,11 +82,12 @@ namespace graphic_editor
             if (_isDrawing && _currentDrawingShape != null)
             {
                 _model.AddShape(_currentDrawingShape);
-                canvasControl1.CurrentDrawingShape = null; // Убираем временную фигуру
+                canvasControl1.CurrentDrawingShape = null;
             }
 
             _isDrawing = false;
             _currentDrawingShape = null;
+            canvasControl1.IsCreatingShape = false;
             canvasControl1.RefreshCanvas();
         }
 
