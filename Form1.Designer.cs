@@ -34,6 +34,7 @@
             открытьToolStripMenuItem = new ToolStripMenuItem();
             сохранитьToolStripMenuItem = new ToolStripMenuItem();
             canvasControl1 = new graphic_editor.Views.CanvasControl();
+            toolPanel1 = new graphic_editor.Views.ToolPanel();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -75,17 +76,28 @@
             // canvasControl1
             // 
             canvasControl1.BackColor = Color.White;
-            canvasControl1.Location = new Point(12, 31);
+            canvasControl1.Location = new Point(247, 31);
             canvasControl1.Model = null;
             canvasControl1.Name = "canvasControl1";
-            canvasControl1.Size = new Size(1189, 587);
+            canvasControl1.Size = new Size(954, 587);
             canvasControl1.TabIndex = 1;
+            canvasControl1.MouseDown += canvasControl1_MouseDown;
+            canvasControl1.MouseMove += canvasControl1_MouseMove;
+            canvasControl1.MouseUp += canvasControl1_MouseUp;
+            // 
+            // toolPanel1
+            // 
+            toolPanel1.Location = new Point(0, 31);
+            toolPanel1.Name = "toolPanel1";
+            toolPanel1.Size = new Size(241, 805);
+            toolPanel1.TabIndex = 2;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1213, 715);
+            Controls.Add(toolPanel1);
             Controls.Add(canvasControl1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
@@ -105,5 +117,6 @@
         private ToolStripMenuItem открытьToolStripMenuItem;
         private ToolStripMenuItem сохранитьToolStripMenuItem;
         private Views.CanvasControl canvasControl1;
+        private Views.ToolPanel toolPanel1;
     }
 }
