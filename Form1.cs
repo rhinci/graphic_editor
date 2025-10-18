@@ -23,9 +23,34 @@ namespace graphic_editor
             toolPanel1.DeleteRequested += ToolPanel_DeleteRequested;
             toolPanel1.ClearRequested += ToolPanel_ClearRequested;
 
+            toolPanel1.FillColorChanged += ToolPanel_FillColorChanged;
+            toolPanel1.StrokeColorChanged += ToolPanel_StrokeColorChanged;
+            toolPanel1.StrokeThicknessChanged += ToolPanel_StrokeThicknessChanged;
+            toolPanel1.FillOpacityChanged += ToolPanel_FillOpacityChanged;
+
             canvasControl1.MouseDown += canvasControl1_MouseDown;
             canvasControl1.MouseMove += canvasControl1_MouseMove;
             canvasControl1.MouseUp += canvasControl1_MouseUp;
+        }
+
+        private void ToolPanel_FillColorChanged(object sender, Color color)
+        {
+            _model.CurrentFillColor = color;
+        }
+
+        private void ToolPanel_StrokeColorChanged(object sender, Color color)
+        {
+            _model.CurrentStrokeColor = color;
+        }
+
+        private void ToolPanel_StrokeThicknessChanged(object sender, float thickness)
+        {
+            _model.CurrentStrokeThickness = thickness;
+        }
+
+        private void ToolPanel_FillOpacityChanged(object sender, float opacity)
+        {
+            _model.CurrentFillOpacity = opacity;
         }
 
         private void ToolPanel_ToolSelected(object sender, string tool)
