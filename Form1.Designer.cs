@@ -30,9 +30,10 @@
         {
             menuStrip1 = new MenuStrip();
             файлToolStripMenuItem = new ToolStripMenuItem();
-            новыйToolStripMenuItem = new ToolStripMenuItem();
-            открытьToolStripMenuItem = new ToolStripMenuItem();
-            сохранитьToolStripMenuItem = new ToolStripMenuItem();
+            menuNew = new ToolStripMenuItem();
+            menuOpen = new ToolStripMenuItem();
+            menuSave = new ToolStripMenuItem();
+            menuExit = new ToolStripMenuItem();
             canvasControl1 = new graphic_editor.Views.CanvasControl();
             toolPanel1 = new graphic_editor.Views.ToolPanel();
             inspectorPanel1 = new graphic_editor.Views.InspectorPanel();
@@ -51,42 +52,42 @@
             // 
             // файлToolStripMenuItem
             // 
-            файлToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { новыйToolStripMenuItem, открытьToolStripMenuItem, сохранитьToolStripMenuItem });
+            файлToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuNew, menuOpen, menuSave, menuExit });
             файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             файлToolStripMenuItem.Size = new Size(59, 24);
             файлToolStripMenuItem.Text = "Файл";
             // 
-            // новыйToolStripMenuItem
+            // menuNew
             // 
-            новыйToolStripMenuItem.Name = "новыйToolStripMenuItem";
-            новыйToolStripMenuItem.Size = new Size(166, 26);
-            новыйToolStripMenuItem.Text = "Новый";
+            menuNew.Name = "menuNew";
+            menuNew.ShortcutKeys = Keys.Control | Keys.N;
+            menuNew.Size = new Size(224, 26);
+            menuNew.Text = "Новый";
             // 
-            // открытьToolStripMenuItem
+            // menuOpen
             // 
-            открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            открытьToolStripMenuItem.Size = new Size(166, 26);
-            открытьToolStripMenuItem.Text = "Открыть";
+            menuOpen.Name = "menuOpen";
+            menuOpen.ShortcutKeys = Keys.Control | Keys.O;
+            menuOpen.Size = new Size(224, 26);
+            menuOpen.Text = "Открыть";
             // 
-            // сохранитьToolStripMenuItem
+            // menuSave
             // 
-            сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            сохранитьToolStripMenuItem.Size = new Size(166, 26);
-            сохранитьToolStripMenuItem.Text = "Сохранить";
+            menuSave.Name = "menuSave";
+            menuSave.ShortcutKeys = Keys.Control | Keys.S;
+            menuSave.Size = new Size(224, 26);
+            menuSave.Text = "Сохранить";
             // 
             // canvasControl1
             // 
             canvasControl1.BackColor = Color.White;
             canvasControl1.CurrentDrawingShape = null;
             canvasControl1.IsCreatingShape = false;
-            canvasControl1.Location = new Point(247, 31);
+            canvasControl1.Location = new Point(236, 31);
             canvasControl1.Model = null;
             canvasControl1.Name = "canvasControl1";
-            canvasControl1.Size = new Size(710, 587);
+            canvasControl1.Size = new Size(710, 618);
             canvasControl1.TabIndex = 1;
-            canvasControl1.MouseDown += canvasControl1_MouseDown;
-            canvasControl1.MouseMove += canvasControl1_MouseMove;
-            canvasControl1.MouseUp += canvasControl1_MouseUp;
             // 
             // toolPanel1
             // 
@@ -116,7 +117,7 @@
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
-            Text = "Form1";
+            Text = "RuFigma";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);
@@ -127,12 +128,12 @@
 
         private MenuStrip menuStrip1;
         private ToolStripMenuItem файлToolStripMenuItem;
-        private ToolStripMenuItem новыйToolStripMenuItem;
-        private ToolStripMenuItem открытьToolStripMenuItem;
-        private ToolStripMenuItem сохранитьToolStripMenuItem;
+        private ToolStripMenuItem menuNew;
+        private ToolStripMenuItem menuOpen;
+        private ToolStripMenuItem menuSave;
+        private ToolStripMenuItem menuExit;
         private Views.CanvasControl canvasControl1;
         private Views.ToolPanel toolPanel1;
         private Views.InspectorPanel inspectorPanel1;
-        //private Views.InspectorPanel inspectorPanel1; 
     }
 }

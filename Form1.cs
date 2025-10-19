@@ -12,6 +12,7 @@ namespace graphic_editor
     {
         private CanvasModel _model = new CanvasModel();
         private CommandManager _commandManager = new CommandManager();
+        private SerializationService _serializationService = new SerializationService();
         private bool _isDrawing = false;
         private PointF _drawStartPoint;
         private string _currentTool = "select";
@@ -43,8 +44,13 @@ namespace graphic_editor
             canvasControl1.MouseDown += canvasControl1_MouseDown;
             canvasControl1.MouseMove += canvasControl1_MouseMove;
             canvasControl1.MouseUp += canvasControl1_MouseUp;
+
+            menuNew.Click += MenuNew_Click;
+            menuOpen.Click += MenuOpen_Click;
+            menuSave.Click += MenuSave_Click;
         }
 
+        //панель инструментов
         private void ToolPanel_FillColorChanged(object sender, Color color)
         {
             _model.CurrentFillColor = color;
@@ -86,7 +92,7 @@ namespace graphic_editor
 
 
 
-
+        //инспектор
         private void Model_SelectedShapeChanged(object sender, EventArgs e)
         {
             inspectorPanel1.BindShape(_model.SelectedShape);
@@ -104,7 +110,7 @@ namespace graphic_editor
 
 
 
-
+        // отмена/повтор действия
         private void ToolPanel_UndoRequested(object sender, EventArgs e)
         {
             Undo();
@@ -153,7 +159,7 @@ namespace graphic_editor
 
 
 
-
+        //работа на холсте
         private void canvasControl1_MouseDown(object sender, MouseEventArgs e)
         {
             if (_currentTool == "select") return;
@@ -241,6 +247,85 @@ namespace graphic_editor
                     line.EndPoint = end;
                     break;
             }
+        }
+
+
+
+
+        // для меню
+        private void MenuNew_Click(object sender, EventArgs e)
+        {
+            if (_model.Shapes.Count > 0)
+            {
+                var result = MessageBox.Show("Создать новый проект? Несохраненные данные будут потеряны((",
+                                           "Новый проект",
+                                           MessageBoxButtons.YesNo,
+                                           MessageBoxIcon.Question);
+                if (result == DialogResult.No) return;
+            }
+
+            _model.Clear();
+            _commandManager.ClearHistory();
+            canvasControl1.RefreshCanvas();
+        }
+
+        private void MenuOpen_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                dialog.Title = "Открыть проект";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var newModel = _serializationService.LoadFromFile(dialog.FileName);
+                        _model = newModel;
+                        canvasControl1.Model = _model;
+                        _commandManager.ClearHistory();
+                        canvasControl1.RefreshCanvas();
+
+                        MessageBox.Show("Проект успешно загружен!)))", "Ура ура",
+                                      MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка загрузки: {ex.Message}", "Ошибка :(",
+                                      MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void MenuSave_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                dialog.Title = "Сохранить проект";
+                dialog.DefaultExt = "json";
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        _serializationService.SaveToFile(dialog.FileName, _model);
+                        MessageBox.Show("Проект успешно сохранён!", "Успех",
+                                      MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
+                                      MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            // Можно добавить проверку на несохраненные изменения
+            base.OnFormClosing(e);
         }
     }
 }
