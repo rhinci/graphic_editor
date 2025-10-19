@@ -16,6 +16,11 @@ namespace graphic_editor.Models
             g.RotateTransform(Rotation);
             g.TranslateTransform(-Position.X, -Position.Y);
 
+            float scaledWidth = Size.Width * Scale;
+            float scaledHeight = Size.Height * Scale;
+            float scaledX = Position.X + (Size.Width - scaledWidth) / 2;
+            float scaledY = Position.Y + (Size.Height - scaledHeight) / 2;
+
             using (var fillBrush = new SolidBrush(Color.FromArgb((int)(FillOpacity * 255), FillColor)))
             {
                 g.FillEllipse(fillBrush, Position.X, Position.Y, Size.Width, Size.Height);
@@ -36,9 +41,14 @@ namespace graphic_editor.Models
 
         public override bool ContainsPoint(PointF p)
         {
+            float scaledWidth = Size.Width * Scale;
+            float scaledHeight = Size.Height * Scale;
+            float scaledX = Position.X + (Size.Width - scaledWidth) / 2;
+            float scaledY = Position.Y + (Size.Height - scaledHeight) / 2;
+
             using (var path = new GraphicsPath())
             {
-                path.AddEllipse(new RectangleF(Position, Size));
+                path.AddEllipse(new RectangleF(scaledX, scaledY, scaledWidth, scaledHeight));
                 return path.IsVisible(p);
             }
         }

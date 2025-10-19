@@ -20,6 +20,17 @@ namespace graphic_editor.Models
             g.RotateTransform(Rotation);
             g.TranslateTransform(-centerX, -centerY);
 
+            float lineVectorX = EndPoint.X - Position.X;
+            float lineVectorY = EndPoint.Y - Position.Y;
+
+            float scaledVectorX = lineVectorX * Scale;
+            float scaledVectorY = lineVectorY * Scale;
+
+            float scaledStartX = centerX - scaledVectorX / 2;
+            float scaledStartY = centerY - scaledVectorY / 2;
+            float scaledEndX = centerX + scaledVectorX / 2;
+            float scaledEndY = centerY + scaledVectorY / 2;
+
             var strokePen = new Pen(StrokeColor, StrokeThickness)
             {
                 DashStyle = IsSelected ? DashStyle.Dash : DashStyle.Solid

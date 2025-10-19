@@ -1,4 +1,5 @@
 using graphic_editor.Models;
+using graphic_editor.Views;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -22,11 +23,13 @@ namespace graphic_editor
             toolPanel1.ToolSelected += ToolPanel_ToolSelected;
             toolPanel1.DeleteRequested += ToolPanel_DeleteRequested;
             toolPanel1.ClearRequested += ToolPanel_ClearRequested;
-
             toolPanel1.FillColorChanged += ToolPanel_FillColorChanged;
             toolPanel1.StrokeColorChanged += ToolPanel_StrokeColorChanged;
             toolPanel1.StrokeThicknessChanged += ToolPanel_StrokeThicknessChanged;
             toolPanel1.FillOpacityChanged += ToolPanel_FillOpacityChanged;
+
+            _model.SelectedShapeChanged += Model_SelectedShapeChanged;
+            inspectorPanel1.ShapeUpdated += InspectorPanel_ShapeUpdated;
 
             canvasControl1.MouseDown += canvasControl1_MouseDown;
             canvasControl1.MouseMove += canvasControl1_MouseMove;
@@ -70,6 +73,23 @@ namespace graphic_editor
             _model.Clear();
             canvasControl1.RefreshCanvas();
         }
+
+
+
+        private void Model_SelectedShapeChanged(object sender, EventArgs e)
+        {
+            inspectorPanel1.BindShape(_model.SelectedShape);
+            canvasControl1.RefreshCanvas();
+        }
+
+        private void InspectorPanel_ShapeUpdated(object sender, EventArgs e)
+        {
+            canvasControl1.RefreshCanvas();
+        }
+
+
+
+
 
         private void canvasControl1_MouseDown(object sender, MouseEventArgs e)
         {

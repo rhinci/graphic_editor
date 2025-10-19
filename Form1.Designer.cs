@@ -35,6 +35,7 @@
             сохранитьToolStripMenuItem = new ToolStripMenuItem();
             canvasControl1 = new graphic_editor.Views.CanvasControl();
             toolPanel1 = new graphic_editor.Views.ToolPanel();
+            inspectorPanel1 = new graphic_editor.Views.InspectorPanel();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -76,10 +77,12 @@
             // canvasControl1
             // 
             canvasControl1.BackColor = Color.White;
+            canvasControl1.CurrentDrawingShape = null;
+            canvasControl1.IsCreatingShape = false;
             canvasControl1.Location = new Point(247, 31);
             canvasControl1.Model = null;
             canvasControl1.Name = "canvasControl1";
-            canvasControl1.Size = new Size(954, 587);
+            canvasControl1.Size = new Size(710, 587);
             canvasControl1.TabIndex = 1;
             canvasControl1.MouseDown += canvasControl1_MouseDown;
             canvasControl1.MouseMove += canvasControl1_MouseMove;
@@ -87,16 +90,27 @@
             // 
             // toolPanel1
             // 
+            toolPanel1.FillColor = Color.LightBlue;
+            toolPanel1.FillOpacity = 0.5F;
             toolPanel1.Location = new Point(0, 31);
             toolPanel1.Name = "toolPanel1";
             toolPanel1.Size = new Size(241, 805);
+            toolPanel1.StrokeColor = Color.Black;
             toolPanel1.TabIndex = 2;
+            // 
+            // inspectorPanel1
+            // 
+            inspectorPanel1.Location = new Point(964, 31);
+            inspectorPanel1.Name = "inspectorPanel1";
+            inspectorPanel1.Size = new Size(237, 587);
+            inspectorPanel1.TabIndex = 3;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1213, 715);
+            Controls.Add(inspectorPanel1);
             Controls.Add(toolPanel1);
             Controls.Add(canvasControl1);
             Controls.Add(menuStrip1);
@@ -118,5 +132,7 @@
         private ToolStripMenuItem сохранитьToolStripMenuItem;
         private Views.CanvasControl canvasControl1;
         private Views.ToolPanel toolPanel1;
+        private Views.InspectorPanel inspectorPanel1;
+        //private Views.InspectorPanel inspectorPanel1; 
     }
 }
