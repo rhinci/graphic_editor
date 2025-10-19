@@ -44,6 +44,8 @@
             labelOpacity = new Label();
             trackOpacity = new TrackBar();
             labelOpacityValue = new Label();
+            btnUndo = new Button();
+            btnRedo = new Button();
             ((System.ComponentModel.ISupportInitialize)numThickness).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackOpacity).BeginInit();
             SuspendLayout();
@@ -189,10 +191,30 @@
             labelOpacityValue.TabIndex = 15;
             labelOpacityValue.Text = "50%";
             // 
+            // btnUndo
+            // 
+            btnUndo.Location = new Point(14, 548);
+            btnUndo.Name = "btnUndo";
+            btnUndo.Size = new Size(99, 38);
+            btnUndo.TabIndex = 16;
+            btnUndo.Text = "Отменить";
+            btnUndo.UseVisualStyleBackColor = true;
+            // 
+            // btnRedo
+            // 
+            btnRedo.Location = new Point(119, 548);
+            btnRedo.Name = "btnRedo";
+            btnRedo.Size = new Size(99, 38);
+            btnRedo.TabIndex = 17;
+            btnRedo.Text = "Повторить";
+            btnRedo.UseVisualStyleBackColor = true;
+            // 
             // ToolPanel
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(btnRedo);
+            Controls.Add(btnUndo);
             Controls.Add(labelOpacityValue);
             Controls.Add(trackOpacity);
             Controls.Add(labelOpacity);
@@ -235,5 +257,7 @@
         private Label labelOpacity;
         private TrackBar trackOpacity;
         private Label labelOpacityValue;
+        private Button btnUndo;
+        private Button btnRedo;
     }
 }

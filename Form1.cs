@@ -1,4 +1,6 @@
+using graphic_editor.Commands;
 using graphic_editor.Models;
+using graphic_editor.Services;
 using graphic_editor.Views;
 using System;
 using System.Drawing;
@@ -9,6 +11,7 @@ namespace graphic_editor
     public partial class Form1 : Form
     {
         private CanvasModel _model = new CanvasModel();
+        private CommandManager _commandManager = new CommandManager();
         private bool _isDrawing = false;
         private PointF _drawStartPoint;
         private string _currentTool = "select";
@@ -19,6 +22,8 @@ namespace graphic_editor
             InitializeComponent();
 
             canvasControl1.Model = _model;
+
+            _commandManager.HistoryChanged += CommandManager_HistoryChanged;
 
             toolPanel1.ToolSelected += ToolPanel_ToolSelected;
             toolPanel1.DeleteRequested += ToolPanel_DeleteRequested;
@@ -91,6 +96,31 @@ namespace graphic_editor
 
 
 
+        private void CommandManager_HistoryChanged(object sender, EventArgs e)
+        {
+            UpdateUndoRedoButtons();
+        }
+
+        private void UpdateUndoRedoButtons()
+        {
+            //toolPanel1.SetUndoRedoState(_commandManager.CanUndo, _commandManager.CanRedo);
+        }
+
+        public void Undo()
+        {
+            _commandManager.Undo();
+            canvasControl1.RefreshCanvas();
+        }
+
+        public void Redo()
+        {
+            _commandManager.Redo();
+            canvasControl1.RefreshCanvas();
+        }
+
+
+
+
         private void canvasControl1_MouseDown(object sender, MouseEventArgs e)
         {
             if (_currentTool == "select") return;
@@ -126,7 +156,9 @@ namespace graphic_editor
         {
             if (_isDrawing && _currentDrawingShape != null)
             {
-                _model.AddShape(_currentDrawingShape);
+                var command = new AddShapeCommand(_model, _currentDrawingShape);
+                _commandManager.ExecuteCommand(command);
+
                 canvasControl1.CurrentDrawingShape = null;
             }
 

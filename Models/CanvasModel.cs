@@ -73,5 +73,13 @@ namespace graphic_editor.Models
         {
             SelectedShapeChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        public void InsertShape(Shape shape, int index)
+        {
+            var shapesList = _shapes.ToList();
+            shapesList.Insert(index, shape);
+            _shapes = shapesList;
+            SelectedShape = shape;
+        }
     }
 }
