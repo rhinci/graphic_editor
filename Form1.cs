@@ -33,6 +33,10 @@ namespace graphic_editor
             toolPanel1.StrokeThicknessChanged += ToolPanel_StrokeThicknessChanged;
             toolPanel1.FillOpacityChanged += ToolPanel_FillOpacityChanged;
 
+            toolPanel1.UndoRequested += ToolPanel_UndoRequested;
+            toolPanel1.RedoRequested += ToolPanel_RedoRequested;
+            _commandManager.HistoryChanged += CommandManager_HistoryChanged;
+
             _model.SelectedShapeChanged += Model_SelectedShapeChanged;
             inspectorPanel1.ShapeUpdated += InspectorPanel_ShapeUpdated;
 
@@ -81,6 +85,8 @@ namespace graphic_editor
 
 
 
+
+
         private void Model_SelectedShapeChanged(object sender, EventArgs e)
         {
             inspectorPanel1.BindShape(_model.SelectedShape);
@@ -96,6 +102,18 @@ namespace graphic_editor
 
 
 
+
+
+
+        private void ToolPanel_UndoRequested(object sender, EventArgs e)
+        {
+            Undo();
+        }
+
+        private void ToolPanel_RedoRequested(object sender, EventArgs e)
+        {
+            Redo();
+        }
         private void CommandManager_HistoryChanged(object sender, EventArgs e)
         {
             UpdateUndoRedoButtons();
@@ -103,7 +121,7 @@ namespace graphic_editor
 
         private void UpdateUndoRedoButtons()
         {
-            //toolPanel1.SetUndoRedoState(_commandManager.CanUndo, _commandManager.CanRedo);
+            toolPanel1.SetUndoRedoState(_commandManager.CanUndo, _commandManager.CanRedo);
         }
 
         public void Undo()
@@ -117,6 +135,21 @@ namespace graphic_editor
             _commandManager.Redo();
             canvasControl1.RefreshCanvas();
         }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.Z))
+            {
+                Undo();
+                return true;
+            }
+            else if (keyData == (Keys.Control | Keys.Y))
+            {
+                Redo();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
 
 
 

@@ -15,6 +15,9 @@ namespace graphic_editor.Views
         public event EventHandler<float>? StrokeThicknessChanged;
         public event EventHandler<float>? FillOpacityChanged;
 
+        public event EventHandler? UndoRequested;
+        public event EventHandler? RedoRequested;
+
         private string _selectedTool = "select";
 
         private float _fillOpacity = 0.5f;
@@ -83,9 +86,35 @@ namespace graphic_editor.Views
             btnDelete.Click += (s, e) => DeleteRequested?.Invoke(this, EventArgs.Empty);
             btnClear.Click += (s, e) => ClearRequested?.Invoke(this, EventArgs.Empty);
 
+            btnUndo.Click += (s, e) => UndoRequested?.Invoke(this, EventArgs.Empty);
+            btnRedo.Click += (s, e) => RedoRequested?.Invoke(this, EventArgs.Empty);
+
             btnFillColor.Click += BtnFillColor_Click;
             btnStrokeColor.Click += BtnStrokeColor_Click;
+
+            UpdateUndoRedoButtons(false, false);
         }
+
+
+
+        public void SetUndoRedoState(bool canUndo, bool canRedo)
+        {
+            btnUndo.Enabled = canUndo;
+            btnRedo.Enabled = canRedo;
+
+            btnUndo.BackColor = canUndo ? SystemColors.Control : Color.LightGray;
+            btnRedo.BackColor = canRedo ? SystemColors.Control : Color.LightGray;
+        }
+        private void UpdateUndoRedoButtons(bool canUndo, bool canRedo)
+        {
+            btnUndo.Enabled = canUndo;
+            btnRedo.Enabled = canRedo;
+
+            btnUndo.BackColor = canUndo ? SystemColors.Control : Color.LightGray;
+            btnRedo.BackColor = canRedo ? SystemColors.Control : Color.LightGray;
+        }
+
+
 
         private void BtnFillColor_Click(object sender, EventArgs e)
         {
