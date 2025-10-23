@@ -14,18 +14,34 @@ namespace graphic_editor.Views
             InitializeComponent();
             SetEnabled(false);
 
-            SubscribeToTextBoxEvents();
-            btnApply.Click += btnApply_Click;
+            SubscribeToEvents();
+
+            trackFillOpacity.Minimum = 0;
+            trackFillOpacity.Maximum = 100;
+            trackFillOpacity.Value = 50;
+
+            numStrokeThickness.Minimum = 1;
+            numStrokeThickness.Maximum = 20;
+            numStrokeThickness.Value = 2;
         }
 
-        private void SubscribeToTextBoxEvents()
+        private void SubscribeToEvents()
         {
             txtX.KeyDown += TextBox_KeyDown;
             txtY.KeyDown += TextBox_KeyDown;
             txtWidth.KeyDown += TextBox_KeyDown;
             txtHeight.KeyDown += TextBox_KeyDown;
             txtRotation.KeyDown += TextBox_KeyDown;
-        }
+
+            btnApply.Click += btnApply_Click;
+
+            btnInspectorFillColor.Click += BtnInspectorFillColor_Click;
+            btnInspectorStrokeColor.Click += BtnInspectorStrokeColor_Click;
+
+            trackFillOpacity.ValueChanged += TrackFillOpacity_ValueChanged;
+
+            numStrokeThickness.ValueChanged += NumStrokeThickness_ValueChanged;
+        }   
 
         public void BindShape(Shape? shape)
         {
@@ -73,6 +89,29 @@ namespace graphic_editor.Views
             }
 
             txtRotation.Text = _boundShape.Rotation.ToString("0.##");
+
+            int opacityPercentage = (int)(_boundShape.FillOpacity * 100);
+            trackFillOpacity.Value = opacityPercentage;
+            labelOpacityValue.Text = $"{opacityPercentage}%";
+
+            numStrokeThickness.Value = (decimal)_boundShape.StrokeThickness;
+        }
+
+        private void UpdateColorButtons()
+        {
+            if (_boundShape == null) return;
+
+            btnInspectorFillColor.BackColor = _boundShape.FillColor;
+            btnInspectorFillColor.ForeColor = GetContrastColor(_boundShape.FillColor);
+
+            btnInspectorStrokeColor.BackColor = _boundShape.StrokeColor;
+            btnInspectorStrokeColor.ForeColor = GetContrastColor(_boundShape.StrokeColor);
+        }
+
+        private Color GetContrastColor(Color color)
+        {
+            double luminance = (0.299 * color.R + 0.587 * color.G + 0.114 * color.B) / 255;
+            return luminance > 0.5 ? Color.Black : Color.White;
         }
 
         private void ApplyChangesToShape()
@@ -130,6 +169,11 @@ namespace graphic_editor.Views
             txtHeight.Enabled = enabled;
             txtRotation.Enabled = enabled;
             btnApply.Enabled = enabled;
+
+            btnInspectorFillColor.Enabled = enabled;
+            trackFillOpacity.Enabled = enabled;
+            btnInspectorStrokeColor.Enabled = enabled;
+            numStrokeThickness.Enabled = enabled;
         }
 
         private void ClearFields()
@@ -139,6 +183,13 @@ namespace graphic_editor.Views
             txtWidth.Text = "";
             txtHeight.Text = "";
             txtRotation.Text = "";
+
+            trackFillOpacity.Value = 50;
+            labelOpacityValue.Text = "50%";
+            numStrokeThickness.Value = 2;
+
+            btnInspectorFillColor.BackColor = SystemColors.Control;
+            btnInspectorStrokeColor.BackColor = SystemColors.Control;
         }
 
         public event EventHandler? ShapeUpdated;
@@ -156,6 +207,63 @@ namespace graphic_editor.Views
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
+        }
+
+
+        private void BtnInspectorFillColor_Click(object sender, EventArgs e)
+        {
+            if (_boundShape == null) return;
+
+            using (ColorDialog colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = _boundShape.FillColor;
+                colorDialog.FullOpen = true;
+
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _boundShape.FillColor = colorDialog.Color;
+                    UpdateColorButtons();
+                    ShapeUpdated?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+
+        private void BtnInspectorStrokeColor_Click(object sender, EventArgs e)
+        {
+            if (_boundShape == null) return;
+
+            using (ColorDialog colorDialog = new ColorDialog())
+            {
+                colorDialog.Color = _boundShape.StrokeColor;
+                colorDialog.FullOpen = true;
+
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _boundShape.StrokeColor = colorDialog.Color;
+                    UpdateColorButtons();
+                    ShapeUpdated?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+
+        private void TrackFillOpacity_ValueChanged(object sender, EventArgs e)
+        {
+            if (_boundShape == null) return;
+
+            float opacity = trackFillOpacity.Value / 100f;
+            _boundShape.FillOpacity = opacity;
+            labelOpacityValue.Text = $"{trackFillOpacity.Value}%";
+            ShapeUpdated?.Invoke(this, EventArgs.Empty);
+        }
+    
+        private void NumStrokeThickness_ValueChanged(object sender, EventArgs e)
+        {
+            if (_boundShape == null) return;
+
+            _boundShape.StrokeThickness = (float)numStrokeThickness.Value;
+            ShapeUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

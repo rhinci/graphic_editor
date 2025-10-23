@@ -324,7 +324,6 @@ namespace graphic_editor
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // Можно добавить проверку на несохраненные изменения
             base.OnFormClosing(e);
         }
     }
