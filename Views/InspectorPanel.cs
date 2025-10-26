@@ -1,13 +1,16 @@
-﻿using System;
+﻿using graphic_editor.Commands;
+using graphic_editor.Models;
+using graphic_editor.Services;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using graphic_editor.Models;
 
 namespace graphic_editor.Views
 {
     public partial class InspectorPanel : UserControl
     {
         private Shape? _boundShape;
+        private CommandManager? _commandManager;
 
         public InspectorPanel()
         {
@@ -114,51 +117,67 @@ namespace graphic_editor.Views
             return luminance > 0.5 ? Color.Black : Color.White;
         }
 
+
+        public void SetCommandManager(CommandManager commandManager)
+        {
+            _commandManager = commandManager;
+        }
+
         private void ApplyChangesToShape()
         {
-            if (_boundShape == null) return;
+            if (_boundShape == null || _commandManager == null) return;
 
             try
             {
-                float x = float.Parse(txtX.Text);
-                float y = float.Parse(txtY.Text);
-                _boundShape.Position = new PointF(x, y);
+                var newState = new ShapeMemento(_boundShape);
 
-                if (_boundShape is RectangleShape rect)
-                {
-                    float width = float.Parse(txtWidth.Text);
-                    float height = float.Parse(txtHeight.Text);
-                }
-                else if (_boundShape is EllipseShape ellipse)
-                {
-                    float width = float.Parse(txtWidth.Text);
-                    float height = float.Parse(txtHeight.Text);
-                }
-                else if (_boundShape is LineShape line)
-                {
-                    float deltaX = float.Parse(txtWidth.Text);
-                    float deltaY = float.Parse(txtHeight.Text);
-                    line.EndPoint = new PointF(x + deltaX, y + deltaY);
-                }
+                UpdateShapeFromFields(_boundShape);
 
-                float rotation = float.Parse(txtRotation.Text);
-
-                _boundShape.Rotation = rotation;
-
-                ShapeUpdated?.Invoke(this, EventArgs.Empty);
-
-                UpdateFieldsFromShape();
+                var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
+                _commandManager.ExecuteCommand(command);
             }
-            catch (FormatException ex)
+            catch (FormatException)
             {
-                MessageBox.Show($"Ошибка формата: {ex.Message}", "Ошибка",
+                MessageBox.Show("Пожалуйста, введите корректные числовые значения", "Ошибка",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex)
+        }
+
+        private void UpdateShapeFromFields(Shape shape)
+        {
+            float x = float.Parse(txtX.Text);
+            float y = float.Parse(txtY.Text);
+            shape.Position = new PointF(x, y);
+
+            if (shape is RectangleShape rect)
             {
-                MessageBox.Show($"Общая ошибка: {ex.Message}", "Ошибка",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                float width = float.Parse(txtWidth.Text);
+                float height = float.Parse(txtHeight.Text);
+                rect.Size = new SizeF(width, height);
             }
+            else if (shape is EllipseShape ellipse)
+            {
+                float width = float.Parse(txtWidth.Text);
+                float height = float.Parse(txtHeight.Text);
+                ellipse.Size = new SizeF(width, height);
+            }
+            else if (shape is LineShape line)
+            {
+                float deltaX = float.Parse(txtWidth.Text);
+                float deltaY = float.Parse(txtHeight.Text);
+                line.EndPoint = new PointF(x + deltaX, y + deltaY);
+            }
+
+            shape.Rotation = float.Parse(txtRotation.Text);
+        }
+
+        private CanvasModel GetCanvasModel()
+        {
+            if (this.Parent is Form1 mainForm)
+            {
+                return mainForm.GetCanvasModel();
+            }
+            return new CanvasModel();
         }
 
         private void SetEnabled(bool enabled)
@@ -212,7 +231,7 @@ namespace graphic_editor.Views
 
         private void BtnInspectorFillColor_Click(object sender, EventArgs e)
         {
-            if (_boundShape == null) return;
+            if (_boundShape == null || _commandManager == null) return;
 
             using (ColorDialog colorDialog = new ColorDialog())
             {
@@ -221,8 +240,16 @@ namespace graphic_editor.Views
 
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
+                    var oldState = new ShapeMemento(_boundShape);
+
                     _boundShape.FillColor = colorDialog.Color;
                     UpdateColorButtons();
+
+                    var newState = new ShapeMemento(_boundShape);
+
+                    var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
+                    _commandManager.ExecuteCommand(command);
+
                     ShapeUpdated?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -250,19 +277,39 @@ namespace graphic_editor.Views
 
         private void TrackFillOpacity_ValueChanged(object sender, EventArgs e)
         {
-            if (_boundShape == null) return;
+            if (_boundShape == null || _commandManager == null) return;
+
+            var oldState = new ShapeMemento(_boundShape);
 
             float opacity = trackFillOpacity.Value / 100f;
             _boundShape.FillOpacity = opacity;
             labelOpacityValue.Text = $"{trackFillOpacity.Value}%";
+
+            var newState = new ShapeMemento(_boundShape);
+
+            var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
+            _commandManager.ExecuteCommand(command);
+
             ShapeUpdated?.Invoke(this, EventArgs.Empty);
         }
-    
+
         private void NumStrokeThickness_ValueChanged(object sender, EventArgs e)
         {
-            if (_boundShape == null) return;
+            if (_boundShape == null || _commandManager == null) return;
 
+            // Сохраняем состояние до изменения
+            var oldState = new ShapeMemento(_boundShape);
+
+            // Применяем изменение
             _boundShape.StrokeThickness = (float)numStrokeThickness.Value;
+
+            // Сохраняем состояние после изменения
+            var newState = new ShapeMemento(_boundShape);
+
+            // Создаем и выполняем команду
+            var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
+            _commandManager.ExecuteCommand(command);
+
             ShapeUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
