@@ -21,6 +21,7 @@ namespace graphic_editor
         public Form1()
         {
             InitializeComponent();
+            inspectorPanel1.SetCommandManager(_commandManager);
 
             canvasControl1.Model = _model;
 
@@ -79,8 +80,12 @@ namespace graphic_editor
 
         private void ToolPanel_DeleteRequested(object sender, EventArgs e)
         {
-            _model.RemoveSelectedShape();
-            canvasControl1.RefreshCanvas();
+            if (_model.SelectedShape != null)
+            {
+                var command = new RemoveShapeCommand(_model, _model.SelectedShape);
+                _commandManager.ExecuteCommand(command);
+                canvasControl1.RefreshCanvas();
+            }
         }
 
         private void ToolPanel_ClearRequested(object sender, EventArgs e)
@@ -154,6 +159,11 @@ namespace graphic_editor
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        public CanvasModel GetCanvasModel()
+        {
+            return _model;
         }
 
 
