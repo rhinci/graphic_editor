@@ -10,7 +10,6 @@ namespace graphic_editor.Views
     public partial class InspectorPanel : UserControl
     {
         private Shape? _boundShape;
-        private CommandManager? _commandManager;
 
         public InspectorPanel()
         {
@@ -44,7 +43,7 @@ namespace graphic_editor.Views
             trackFillOpacity.ValueChanged += TrackFillOpacity_ValueChanged;
 
             numStrokeThickness.ValueChanged += NumStrokeThickness_ValueChanged;
-        }   
+        }
 
         public void BindShape(Shape? shape)
         {
@@ -54,6 +53,7 @@ namespace graphic_editor.Views
             {
                 SetEnabled(true);
                 UpdateFieldsFromShape();
+                UpdateColorButtons();
             }
             else
             {
@@ -61,6 +61,7 @@ namespace graphic_editor.Views
                 ClearFields();
             }
         }
+
 
         private void UpdateFieldsFromShape()
         {
@@ -118,23 +119,14 @@ namespace graphic_editor.Views
         }
 
 
-        public void SetCommandManager(CommandManager commandManager)
-        {
-            _commandManager = commandManager;
-        }
-
         private void ApplyChangesToShape()
         {
-            if (_boundShape == null || _commandManager == null) return;
+            if (_boundShape == null) return;
 
             try
             {
-                var newState = new ShapeMemento(_boundShape);
-
                 UpdateShapeFromFields(_boundShape);
-
-                var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
-                _commandManager.ExecuteCommand(command);
+                ShapeUpdated?.Invoke(this, EventArgs.Empty);
             }
             catch (FormatException)
             {
@@ -231,7 +223,7 @@ namespace graphic_editor.Views
 
         private void BtnInspectorFillColor_Click(object sender, EventArgs e)
         {
-            if (_boundShape == null || _commandManager == null) return;
+            if (_boundShape == null) return;
 
             using (ColorDialog colorDialog = new ColorDialog())
             {
@@ -240,16 +232,8 @@ namespace graphic_editor.Views
 
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var oldState = new ShapeMemento(_boundShape);
-
                     _boundShape.FillColor = colorDialog.Color;
                     UpdateColorButtons();
-
-                    var newState = new ShapeMemento(_boundShape);
-
-                    var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
-                    _commandManager.ExecuteCommand(command);
-
                     ShapeUpdated?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -277,39 +261,19 @@ namespace graphic_editor.Views
 
         private void TrackFillOpacity_ValueChanged(object sender, EventArgs e)
         {
-            if (_boundShape == null || _commandManager == null) return;
-
-            var oldState = new ShapeMemento(_boundShape);
+            if (_boundShape == null) return;
 
             float opacity = trackFillOpacity.Value / 100f;
             _boundShape.FillOpacity = opacity;
             labelOpacityValue.Text = $"{trackFillOpacity.Value}%";
-
-            var newState = new ShapeMemento(_boundShape);
-
-            var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
-            _commandManager.ExecuteCommand(command);
-
             ShapeUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         private void NumStrokeThickness_ValueChanged(object sender, EventArgs e)
         {
-            if (_boundShape == null || _commandManager == null) return;
+            if (_boundShape == null) return;
 
-            // Сохраняем состояние до изменения
-            var oldState = new ShapeMemento(_boundShape);
-
-            // Применяем изменение
             _boundShape.StrokeThickness = (float)numStrokeThickness.Value;
-
-            // Сохраняем состояние после изменения
-            var newState = new ShapeMemento(_boundShape);
-
-            // Создаем и выполняем команду
-            var command = new ModifyShapeCommand(GetCanvasModel(), _boundShape, newState);
-            _commandManager.ExecuteCommand(command);
-
             ShapeUpdated?.Invoke(this, EventArgs.Empty);
         }
     }

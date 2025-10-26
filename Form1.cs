@@ -21,7 +21,6 @@ namespace graphic_editor
         public Form1()
         {
             InitializeComponent();
-            inspectorPanel1.SetCommandManager(_commandManager);
 
             canvasControl1.Model = _model;
 
@@ -106,6 +105,13 @@ namespace graphic_editor
 
         private void InspectorPanel_ShapeUpdated(object sender, EventArgs e)
         {
+            if (_model.SelectedShape != null)
+            {
+                var newProperties = new ShapeProperties(_model.SelectedShape);
+                var command = new ModifyShapePropertiesCommand(_model, _model.SelectedShape, newProperties);
+                _commandManager.ExecuteCommand(command);
+            }
+
             canvasControl1.RefreshCanvas();
         }
 
