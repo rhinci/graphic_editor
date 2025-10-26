@@ -1,9 +1,6 @@
 ﻿using graphic_editor.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace graphic_editor.Commands
@@ -20,7 +17,9 @@ namespace graphic_editor.Commands
         {
             _model = model;
             _shape = shape;
-            _index = model.Shapes.ToList().IndexOf(shape);
+
+            var shapesList = model.Shapes.ToList();
+            _index = shapesList.IndexOf(shape);
         }
 
         public void Execute()
@@ -30,15 +29,7 @@ namespace graphic_editor.Commands
 
         public void Undo()
         {
-            var shapesList = _model.Shapes.ToList();
-            shapesList.Insert(_index, _shape);
-
-            _model.Clear();
-            foreach (var shape in shapesList)
-            {
-                _model.AddShape(shape);
-            }
-            _model.SelectShapeAtPoint(_shape.Position);
+            _model.InsertShape(_shape, _index);
         }
 
         private string GetShapeTypeName(Shape shape)

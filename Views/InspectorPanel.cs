@@ -163,14 +163,6 @@ namespace graphic_editor.Views
             shape.Rotation = float.Parse(txtRotation.Text);
         }
 
-        private CanvasModel GetCanvasModel()
-        {
-            if (this.Parent is Form1 mainForm)
-            {
-                return mainForm.GetCanvasModel();
-            }
-            return new CanvasModel();
-        }
 
         private void SetEnabled(bool enabled)
         {
